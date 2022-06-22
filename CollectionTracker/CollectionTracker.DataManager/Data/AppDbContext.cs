@@ -10,6 +10,11 @@ namespace CollectionTracker.DataManager.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
+
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Item> Items { get; set; }
     }
