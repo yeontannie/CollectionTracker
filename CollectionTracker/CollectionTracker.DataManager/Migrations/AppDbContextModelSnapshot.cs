@@ -51,7 +51,7 @@ namespace CollectionTracker.DataManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Collections");
+                    b.ToTable("Collections", (string)null);
                 });
 
             modelBuilder.Entity("CollectionTracker.Core.Item", b =>
@@ -80,7 +80,7 @@ namespace CollectionTracker.DataManager.Migrations
 
                     b.HasIndex("CollectionId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("CollectionTracker.Core.User", b =>

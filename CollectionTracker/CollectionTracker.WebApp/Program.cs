@@ -59,6 +59,10 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddTransient<TokenCommands>();
 builder.Services.AddTransient<UserCommands>();
 builder.Services.AddTransient<UserQueries>();
+builder.Services.AddTransient<CollectionCommands>();
+builder.Services.AddTransient<CollectionQueries>();
+builder.Services.AddTransient<ItemCommands>();
+builder.Services.AddTransient<ItemQueries>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

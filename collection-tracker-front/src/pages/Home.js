@@ -1,13 +1,33 @@
-import React from "react"
-import Collection from "../components/Collection"
+import React, { useEffect } from "react"
+import itemService from "../services/itemService"
+import ShowItems from "../components/ShowItems"
 
 export default function Home(){
+    const [allItems, setAllItems] = React.useState([])
+    const [isLoading, setIsLoading] = React.useState(true)
+
+    localStorage.removeItem("collections")
+    localStorage.removeItem("cWithItems")
+
+    useEffect(() => {
+        itemService.getAll()
+            .then(response => {
+                console.log(response.data)
+                setData(response.data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }, [])
+
+    function setData(data){
+        setAllItems(data)
+        setIsLoading(false)
+    }
+
     return(
         <div>
-            <h1>Home page</h1>
-            <Collection 
-                img="photo.png"
-            />
+            <ShowItems isLoading={isLoading} items={allItems} />
         </div>
     )
 }

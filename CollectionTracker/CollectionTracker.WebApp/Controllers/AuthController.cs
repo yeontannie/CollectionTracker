@@ -36,93 +36,106 @@ namespace CollectionTracker.WebApp.Controllers
         [Route("login")]
         public async Task<IActionResult> Login(AuthRequest model)
         {
-            var userExists = await userQueries.UserExists(model.Email);
-            if (userExists != null && await userManager.CheckPasswordAsync(userExists, model.Password))
+            if (ModelState.IsValid)
             {
-                var userRoles = await userManager.GetRolesAsync(userExists);
-                var authClaims = new List<Claim>
+                var userExists = await userQueries.UserExists(model.Email);
+                if (userExists != null && await userManager.CheckPasswordAsync(userExists, model.Password))
+                {
+                    var userRoles = await userManager.GetRolesAsync(userExists);
+                    var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userExists.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    foreach (var userRole in userRoles)
+                    {
+                        authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    }
+
+                    var token = tokenCommands.GenerateToken(authClaims);
+                    var refreshToken = tokenCommands.GenerateRefreshToken();
+                    var expiresIn = int.Parse(configuration["JWT:RefreshTokenValidityInDays"]);
+
+                    userExists.RefreshToken = refreshToken;
+                    userExists.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(expiresIn);
+                    await userManager.UpdateAsync(userExists);
+
+                    return Ok(new
+                    {
+                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        RefreshToken = refreshToken,
+                        Expiration = token.ValidTo,
+                        UserName = userExists.UserName
+                    });
                 }
-
-                var token = tokenCommands.GenerateToken(authClaims);
-                var refreshToken = tokenCommands.GenerateRefreshToken();
-                var expiresIn = int.Parse(configuration["JWT:RefreshTokenValidityInDays"]);
-
-                userExists.RefreshToken = refreshToken;
-                userExists.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(expiresIn);
-                await userManager.UpdateAsync(userExists);
-
-                return Ok(new
-                {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    RefreshToken = refreshToken,
-                    Expiration = token.ValidTo
-                });
+                return StatusCode(StatusCodes.Status401Unauthorized);
             }
-            return StatusCode(StatusCodes.Status401Unauthorized);
+            return StatusCode(StatusCodes.Status400BadRequest);
         }
 
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register(AuthRequest model)
         {
-            var userExists = await userQueries.UserExists(model.Email);
-            if(userExists != null)
+            if (ModelState.IsValid)
             {
-                return StatusCode(StatusCodes.Status409Conflict);
-            }
+                var userExists = await userQueries.UserExists(model.Email);
+                if (userExists != null)
+                {
+                    return StatusCode(StatusCodes.Status409Conflict);
+                }
 
-            var user = userCommands.InitUser(model.Email);
-            var result = await userCommands.CreateUser(user, model.Password);
-            if (!result.Succeeded)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+                var user = userCommands.InitUser(model.Email);
+                var result = await userCommands.CreateUser(user, model.Password);
+                if (!result.Succeeded)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
 
-            if (!await roleManager.RoleExistsAsync(UserRoles.User))
-            {
-                await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+                if (!await roleManager.RoleExistsAsync(UserRoles.User))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+                }
+                if (await roleManager.RoleExistsAsync(UserRoles.User))
+                {
+                    await userManager.AddToRoleAsync(user, UserRoles.User);
+                }
+                return StatusCode(StatusCodes.Status200OK);
             }
-            if (await roleManager.RoleExistsAsync(UserRoles.User))
-            {
-                await userManager.AddToRoleAsync(user, UserRoles.User);
-            }
-            return StatusCode(StatusCodes.Status200OK);
+            return StatusCode(StatusCodes.Status400BadRequest);
         }
 
         [HttpPost]
         [Route("register-admin")]
         public async Task<IActionResult> RegisterAdmin(AuthRequest model)
         {
-            var userExists = await userQueries.UserExists(model.Email);
-            if (userExists != null)
+            if (ModelState.IsValid)
             {
-                return StatusCode(StatusCodes.Status409Conflict);
-            }
+                var userExists = await userQueries.UserExists(model.Email);
+                if (userExists != null)
+                {
+                    return StatusCode(StatusCodes.Status409Conflict);
+                }
 
-            var user = userCommands.InitUser(model.Email);
-            var result = await userCommands.CreateUser(user, model.Password);
-            if (!result.Succeeded)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+                var user = userCommands.InitUser(model.Email);
+                var result = await userCommands.CreateUser(user, model.Password);
+                if (!result.Succeeded)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
 
-            if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
-                await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+                if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+                }
+                if (await roleManager.RoleExistsAsync(UserRoles.Admin))
+                {
+                    await userManager.AddToRoleAsync(user, UserRoles.Admin);
+                }
+                return StatusCode(StatusCodes.Status200OK);
             }
-            if (await roleManager.RoleExistsAsync(UserRoles.Admin))
-            {
-                await userManager.AddToRoleAsync(user, UserRoles.Admin);
-            }
-            return StatusCode(StatusCodes.Status200OK);
+            return StatusCode(StatusCodes.Status400BadRequest);
         }
 
         [HttpPost]
@@ -173,18 +186,5 @@ namespace CollectionTracker.WebApp.Controllers
             userCommands.RefreshUsersToken(user);
             return NoContent();
         }
-
-        //[Authorize]
-        //[HttpPost]
-        //[Route("revoke-all")]
-        //public async Task<IActionResult> RevokeAll()
-        //{
-        //    var users = userManager.Users.ToList();
-        //    foreach (var user in users)
-        //    {
-        //        userCommands.RefreshUsersToken(user);
-        //    }
-        //    return NoContent();
-        //}
     }
 }

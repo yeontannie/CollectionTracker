@@ -13,6 +13,6 @@ namespace CollectionTracker.Core
         public string Theme { get; set; }
         public string UserName { get; set; }
         public int ItemsAmount { get; set; }
-        public ICollection<Item> Items { get; set; }
+        public ICollection<Item>? Items { get; set; }
     }
 }

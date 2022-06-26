@@ -14,6 +14,7 @@ export default function Login(){
             .then(response => {
                 console.log(response.data)
                 localStorage.setItem("userData", JSON.stringify(response.data))
+                localStorage.setItem("username", JSON.stringify(response.data.userName))
                 handleSubmit()
             })
             .catch(error => {
