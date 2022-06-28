@@ -1,8 +1,83 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Item from "./Item"
 import AddBtn from "./AddBtn"
+import ModalItem from "./ModalItem"
+import collectionService from "../services/collectionService"
+import itemService from "../services/itemService"
+import Moment from 'moment'
 
 export default function ShowItems(props){
+    const [isModalVisible, setIsModalVisible] = React.useState(false)
+    const [collections, setCollections] = React.useState()
+    const [newItem, setNewItem] = React.useState({
+        name: "",
+        userName: JSON.parse(localStorage.getItem("username")),
+        created: Moment.utc(Date.now()).toISOString(),
+        collectionId: 0
+    })
+
+    function setData(data){
+        setCollections(data)
+    }
+
+    useEffect(() => {
+        collectionService.getAll()
+            .then(response => {
+                setData(response.data)
+            })
+            .catch(error => console.log(error))
+    }, [])
+
+    const showModal = () => {
+        setIsModalVisible(true)
+    }
+
+    const handleCancel = () => {
+        setIsModalVisible(false)
+    }
+
+    function handleChange(event, name){
+        setNewItem(oldData => {
+            return {
+                ...oldData,
+                [name]: event.target.value
+            }
+        })
+    }
+
+    const handleOk = () => {
+        addItem(newItem)
+        setIsModalVisible(false)
+    }
+
+    function addItem(model){
+        itemService.createItem(model)
+            .then(response => {
+                console.log(response)
+                props.refresh()
+            })
+            .catch(error => console.log(error))
+    }
+
+    function deleteItem(id){
+        console.log(id)
+        itemService.deleteItem(id)
+            .then(response => {
+                console.log(response)
+                props.refresh()
+            })
+            .catch(error => console.log(error))
+    }
+
+    function editItem(model, id){
+        itemService.editItem(model, id)
+            .then(response => {
+                console.log(response)
+                props.refresh()
+            })
+            .catch(error => console.log(error))
+    }
+
     if(props.isLoading){
         return(
             <div className="center-title"><h2>Loading...</h2></div>
@@ -13,9 +88,25 @@ export default function ShowItems(props){
         } else {
             return(
                 <div>
-                    { JSON.parse(localStorage.getItem("username")) && <AddBtn /> }
+                    { JSON.parse(localStorage.getItem("username")) && <AddBtn showModal={showModal} /> }
+                    { isModalVisible && <>
+                        <ModalItem isModalVisible={isModalVisible}
+                            handleCancel={handleCancel} 
+                            handleOk={handleOk}
+                            item={newItem} 
+                            collections={collections} 
+                            handleChange={handleChange}
+                            title="Create Item"  
+                        />
+                    </>}
                     <div className="items-list">
-                        {props.items && props.items.map(i => <Item img="nature-2.png" item={i} key={i.id} />)}
+                        {props.items && props.items.map(i => <Item img="nature-2.png" 
+                            item={i} id={i.id}
+                            collections={collections}
+                            key={i.id}
+                            delete={deleteItem} 
+                            edit={editItem}
+                        />)}
                     </div>
                 </div>
             )

@@ -25,9 +25,42 @@ export default function Home(){
         setIsLoading(false)
     }
 
+    function refreshItems(){
+        itemService.getAll()
+            .then(response => {
+                console.log(response.data)
+                setData(response.data)
+            })
+            .catch(error => console.log(error))
+    }
+
+    /*function addItem(model){
+        itemService.createItem(model)
+            .then(response => {
+                console.log(response)
+                refreshItems()
+            })
+            .catch(error => console.log(error))
+    }
+
+    function deleteItem(id){
+        itemService.deleteItem(id)
+            .then(response => console.log(response))
+            .catch(error => console.log(error))
+    }
+
+    function editItem(model, id){
+        itemService.editItem(model, id)
+            .then(response => console.log(response))
+            .catch(error => console.log(error))
+    }*/
+
     return(
         <div>
-            <ShowItems isLoading={isLoading} items={allItems} />
+            <ShowItems isLoading={isLoading} 
+                items={allItems}
+                refresh={refreshItems}
+            />
         </div>
     )
 }

@@ -14,6 +14,35 @@ export default function ShowCollection(props){
         itemAmounts: 0
     })
 
+    function addCollection(newCollection){
+        collectionService.createCollection(newCollection)
+            .then(response => {
+                console.log(response)
+                props.refresh()
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
+    function editCollection(collection, id){
+        collectionService.editCollection(collection, id)
+            .then(response => {
+                console.log(response)
+                props.refresh()
+            })
+            .catch(error => console.log(error))
+    }
+
+    function deleteCollection(id){
+        collectionService.deleteCollection(id)
+            .then(response => {
+                console.log(response)
+                props.refresh()
+            })
+            .catch(error => console.log(error))
+    }
+
     function handleChange(event, name){
         setNewCollection(oldData => {
             return {
@@ -40,7 +69,7 @@ export default function ShowCollection(props){
     }
 
     async function handleOk() {
-        props.addCollection(newCollection)
+        addCollection(newCollection)
         setIsModalVisible(false);
     }
     
@@ -65,6 +94,7 @@ export default function ShowCollection(props){
                             handleCancel={handleCancel} 
                             handleChange={handleChange}
                             collection={newCollection}
+                            title="Create Collection" 
                         /></>
                     }
                     <div className="collection-list">
@@ -72,7 +102,8 @@ export default function ShowCollection(props){
                             {props.collections.map(c => <Collection id={c.id} 
                                 img="photo.png" collection={c}
                                 handleShow={handleShow} key={c.id} 
-                                delete={props.delete} edit={props.edit}
+                                delete={deleteCollection} 
+                                edit={editCollection}
                             />)}
                         </>}
                     </div>

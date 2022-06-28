@@ -8,7 +8,7 @@ export default function Collections(){
 
     localStorage.removeItem("items")
 
-    function getCollections(data){
+    function setData(data){
         setCollections(data)
         setIsLoading(false)
     }
@@ -16,16 +16,29 @@ export default function Collections(){
     useEffect(() => {
         collectionService.getAll()
             .then(response => {
-                getCollections(response.data)
+                setData(response.data)
             })
             .catch(error => {
                 console.log(error)
             })
     }, [])
 
+    function refreshCollections(){
+        collectionService.getAll()
+            .then(response => {
+                setData(response.data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
     return(
         <div>
-            <ShowCollections isLoading={isLoading} collections={collections} />
+            <ShowCollections 
+                isLoading={isLoading} 
+                collections={collections}
+                refresh={refreshCollections} />
         </div>
     ) 
 }

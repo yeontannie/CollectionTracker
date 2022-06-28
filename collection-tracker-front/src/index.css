@@ -56,7 +56,7 @@ code {
 }
 
 .main-content {
-  padding: 0 50px;
+  padding: 0 20px;
   padding-top: 64px;
 }
 
@@ -326,7 +326,7 @@ code {
   transform: scale(0.96);
 }
 
-.modal {
+.modal, .modal-delete, .modal-item {
   position: absolute;
   top: 130px;
   left: 450px;
@@ -366,4 +366,64 @@ code {
 .modal-form {
   margin-left: 170px;
   margin-bottom: 13px;
+}
+
+.form-select  {
+  display: flex;
+  flex-direction: row;
+  border: 0.2px solid #ccc;
+  border-radius: 4px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: 180px;
+  height: 25px;
+}
+
+.option {
+  color: black;
+}
+
+.item-btns {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 5px;
+}
+
+.item-delete, .item-edit {
+  background-color: #F3F4F6;
+  width: 80px;
+  border: 0.1px solid #222222;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.item-delete:hover {
+  color: red;
+}
+
+.item-edit:hover {
+  color: lightseagreen;
+}
+
+.modal-delete {
+  height: 150px;
+
+  font-size: 22px;
+  font-weight: 600;
+  padding: 10px 30px;
+  border-radius: 9px;
+}
+
+.modal-item {
+  height: 200px;
+}
+
+.modal-text {
+  font-size: 18px;
+  font-weight: 400;
+  margin: 17px 0;
+}
+
+.modal-form-delete{
+  margin-left: 100px;
 }

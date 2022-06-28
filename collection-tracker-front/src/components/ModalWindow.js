@@ -5,7 +5,7 @@ import { Form, Input } from 'antd';
 export default function ModalWindow(props){
     return(
         <div>
-            <Modal className="modal" title="Create Collection" 
+            <Modal className="modal" title={props.title}
                 visible={props.isModalVisible} 
                 onOk={props.handleOk}
                 onCancel={props.handleCancel}
@@ -13,12 +13,12 @@ export default function ModalWindow(props){
                 closable={false}
                 cancelButtonProps={{ style: { height: "30px", 
                     borderRadius: "6px", border: "0.2px solid #222222", backgroundColor: "white",
-                    color: "black", fontWeight: "500", float: "right", marginRight: "5px" } 
+                    color: "black", fontWeight: "500", float: "right", marginRight: "5px", cursor: "pointer" } 
                 }}
 
                 okButtonProps={{ style: { height: "30px", width: "60px",
                     borderRadius: "6px", border: "none", backgroundColor: "#4F46E5",
-                    color: "white", fontWeight: "500", float: "right", marginRight: "5px" }
+                    color: "white", fontWeight: "500", float: "right", marginRight: "5px", cursor: "pointer" }
                 }}
                 okText="SAVE"
             >
@@ -39,7 +39,6 @@ export default function ModalWindow(props){
                         name="name"
                         className="modal-labels"
                         onChange={(event) => {props.handleChange(event, "name")}}
-                        value={props.collection.name}
                         rules={[
                         {
                             required: true,
@@ -47,7 +46,11 @@ export default function ModalWindow(props){
                         },
                         ]}
                     >
-                        <Input type="text" className="modal-input" />
+                        {props.title === "Create Collection" ? <>
+                            <Input type="text" className="modal-input"  defaultValue="" />
+                        </> : <>
+                            <Input type="text" className="modal-input"  defaultValue={props.collection.name} />
+                        </>}
                     </Form.Item>
 
                     <Form.Item
@@ -55,7 +58,6 @@ export default function ModalWindow(props){
                         name="description"
                         className="modal-labels"
                         onChange={(event) => {props.handleChange(event, "description")}}
-                        value={props.collection.description}
                         rules={[
                         {
                             required: true,
@@ -63,7 +65,11 @@ export default function ModalWindow(props){
                         },
                         ]}
                     >
-                        <Input type="text" className="modal-input" />
+                        {props.title === "Create Collection" ? <>
+                            <Input type="text" className="modal-input"  defaultValue="" />
+                        </> : <>
+                            <Input type="text" className="modal-input"  defaultValue={props.collection.description} />
+                        </>}
                     </Form.Item>
 
                     <Form.Item
@@ -71,7 +77,6 @@ export default function ModalWindow(props){
                         name="theme"
                         className="modal-labels"
                         onChange={(event) => {props.handleChange(event, "theme")}}
-                        value={props.collection.theme}
                         rules={[
                         {
                             required: true,
@@ -79,7 +84,11 @@ export default function ModalWindow(props){
                         },
                         ]}
                     >
-                        <Input type="text" className="modal-input" />
+                        {props.title === "Create Collection" ? <>
+                            <Input type="text" className="modal-input"  defaultValue="" />
+                        </> : <>
+                            <Input type="text" className="modal-input"  defaultValue={props.collection.theme} />
+                        </>}
                     </Form.Item>
                 </Form>
                 <hr className="modal-hr" />
