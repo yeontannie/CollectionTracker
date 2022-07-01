@@ -5,6 +5,7 @@ import Home from "./Home.js"
 import Collections from "./Collections.js";
 import MyCollections from "./MyCollections.js";
 import Items from "./Items.js";
+import Comments from "./Comments"
 
 import Login from "./Login.js"
 import Logout from "./Logout.js";
@@ -18,6 +19,7 @@ export default function Navigation(){
                 <Route path="/collections" element={<Collections />} />
                 <Route path="/my-collections" element={<MyCollections />} />
                 <Route path="/items" element={<Items />} />
+                <Route path="/item/comments" element={<Comments />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/register" element={<Register />} />

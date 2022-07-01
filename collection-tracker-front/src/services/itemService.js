@@ -4,11 +4,12 @@ const URL = "https://localhost:7064/api/Items/"
 
 export default class itemService {
     static getByCollection(id){
-        return axios.get(URL + "get-items", {
-            params: {
-              id: id
-            }
-          })
+      return axios.get(URL + "get-items", {
+          params: {
+            id: id
+          }
+        }
+      )
     }
 
     static getAll(){

@@ -8,6 +8,7 @@ import Moment from 'moment'
 
 export default function ShowItems(props){
     const [isModalVisible, setIsModalVisible] = React.useState(false)
+    const [usernm] = React.useState(JSON.parse(localStorage.getItem("username")))
     const [collections, setCollections] = React.useState()
     const [newItem, setNewItem] = React.useState({
         name: "",
@@ -15,6 +16,8 @@ export default function ShowItems(props){
         created: Moment.utc(Date.now()).toISOString(),
         collectionId: 0
     })
+
+    localStorage.removeItem("currentItem")
 
     function setData(data){
         setCollections(data)
@@ -105,7 +108,7 @@ export default function ShowItems(props){
                             collections={collections}
                             key={i.id}
                             delete={deleteItem} 
-                            edit={editItem}
+                            edit={editItem} isLiked={i.likes && (i.likes.filter(l => l.userName === usernm).length === 1 ? true : false)}
                         />)}
                     </div>
                 </div>

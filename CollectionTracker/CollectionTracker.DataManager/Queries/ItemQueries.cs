@@ -15,17 +15,22 @@ namespace CollectionTracker.DataManager.Queries
 
         public Item GetById(int id)
         {
-            return context.Items.Find(id);
+            return context.Items.Include(i => i.Likes).FirstOrDefault(i => i.Id == id);
         }
 
         public IEnumerable<Item> GetAll()
         {
-            return context.Items.ToList();
+            return context.Items.Include(i => i.Likes).ToList();
         }
 
         public IEnumerable<Item> GetByCollection(int collectionId)
         {
-            return context.Items.Where(x => x.CollectionId == collectionId).ToList();
+            return context.Items.Include(i => i.Likes).Where(x => x.CollectionId == collectionId).ToList();
+        }
+
+        public Item GetItemWithLikes(int id)
+        {
+            return context.Items.Include(i => i.Likes).FirstOrDefault(i => i.Id == id);
         }
     }
 }

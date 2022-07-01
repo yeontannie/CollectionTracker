@@ -3,16 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CollectionTracker.Core
 {
-    public class Item
+    public class Like
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Name { get; set; }
+        public int ItemId { get; set; }
         public string UserName { get; set; }
-        public DateTime Created { get; set; }
-        public int CollectionId { get; set; }
-        public List<Like> Likes { get; set; }
-        public List<Comment> Comments { get; set; }
     }
 }

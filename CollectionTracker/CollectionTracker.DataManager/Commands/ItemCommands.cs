@@ -8,11 +8,16 @@ namespace CollectionTracker.DataManager.Commands
     {
         private readonly AppDbContext context;
         private readonly ItemQueries itemQueries;
+        private readonly LikeCommentQueries lcQueries;
+        private readonly LikeCommentCommands lcCommands;
 
-        public ItemCommands(AppDbContext ctx, ItemQueries itemQ)
+        public ItemCommands(AppDbContext ctx, ItemQueries itemQ, 
+            LikeCommentQueries lcQ, LikeCommentCommands lcC)
         {
             context = ctx;
             itemQueries = itemQ;
+            lcQueries = lcQ;
+            lcCommands = lcC;
         }
 
         public async Task Add(Item model)
@@ -40,6 +45,18 @@ namespace CollectionTracker.DataManager.Commands
 
         public async Task Delete(int id)
         {
+            var likes = lcQueries.GetLikes(id);
+            var comments = lcQueries.GetCommentsByItem(id);
+
+            if (likes.Capacity != 0)
+            {
+                await lcCommands.DeleteLike(likes);
+            }
+            else if(comments.Capacity != 0)
+            {
+                await lcCommands.DeleteComment(comments);
+            }
+
             context.Remove(itemQueries.GetById(id));
             await context.SaveChangesAsync();
         }

@@ -63,6 +63,8 @@ builder.Services.AddTransient<CollectionCommands>();
 builder.Services.AddTransient<CollectionQueries>();
 builder.Services.AddTransient<ItemCommands>();
 builder.Services.AddTransient<ItemQueries>();
+builder.Services.AddTransient<LikeCommentCommands>();
+builder.Services.AddTransient<LikeCommentQueries>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -11,7 +11,7 @@ export default function Items(){
     }
 
     function refreshItems(){
-        itemService.getAll()
+        itemService.getByCollection(collection.id)
             .then(response => {
                 console.log(response.data)
                 setData(response.data)
